@@ -1,6 +1,7 @@
 <template>
     <header>
         <h1><img src="../assets/logo.png" alt="" /></h1>
+        <button class="button" @click="alterarTema">{{ textoDoBotao }}</button>
     </header>
 </template>
 
@@ -9,13 +10,32 @@
 
     export default defineComponent({
         name: 'BarraLateral',
+        emits: ['temaAlterado'],
+        data() {
+            return {
+                modoEscuroAtivo: false,
+            };
+        },
+        computed: {
+            textoDoBotao(): string {
+                return this.modoEscuroAtivo ? 'Ativar modo claro' : 'Ativar modo escuro';
+            },
+        },
+        methods: {
+            alterarTema() {
+                this.modoEscuroAtivo = !this.modoEscuroAtivo;
+                this.$emit('temaAlterado', this.modoEscuroAtivo);
+            },
+        },
     });
 </script>
 
 <style scoped>
     header {
         display: flex;
-        justify-content: center;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
         padding: 1rem;
         background: #0d3b66;
         width: 100%;
