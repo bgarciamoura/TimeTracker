@@ -1,8 +1,14 @@
 import type { InjectionKey } from 'vue';
 import type { Store } from 'vuex';
-import { useStore as vuexUseStore } from 'vuex';
-import { createStore } from 'vuex';
+import { createStore, useStore as vuexUseStore } from 'vuex';
 
+import { OBTER_PROJETOS } from './action-types';
+import {
+	ADD_PROJETO,
+	ALTERAR_PROJETO,
+	REMOVER_PROJETO,
+} from './mutation-types';
+import { clienteHttp } from '@/http';
 import IProjeto from '@/interfaces/IProjeto';
 
 interface State {
@@ -16,23 +22,30 @@ export const store = createStore<State>({
 		projetos: [],
 	},
 	mutations: {
-		ADD_PROJETO: (state, nomeDoProjeto: string) => {
+		[ADD_PROJETO]: (state, nomeDoProjeto: string) => {
 			const projeto = {
 				id: new Date().toISOString(),
 				nome: nomeDoProjeto,
 			} as IProjeto;
 			state.projetos.push(projeto);
 		},
-		ALTERAR_PROJETO: (state, projeto: IProjeto) => {
+		[ALTERAR_PROJETO]: (state, projeto: IProjeto) => {
 			const index = state.projetos.findIndex(
 				(proj) => proj.id === projeto.id
 			);
 			state.projetos[index] = projeto;
 		},
-		REMOVER_PROJETO: (state, idDoProjeto: string) => {
+		[REMOVER_PROJETO]: (state, idDoProjeto: string) => {
 			state.projetos = state.projetos.filter(
 				(projeto) => projeto.id !== idDoProjeto
 			);
+		},
+	},
+	actions: {
+		[OBTER_PROJETOS]({ commit }) {
+			clienteHttp.get('/projetos').then((response) => {
+				commit(ADD_PROJETO, response.data);
+			});
 		},
 	},
 });
