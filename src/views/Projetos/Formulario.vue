@@ -31,6 +31,10 @@
 	import { defineComponent } from 'vue';
 
 	import { useStore } from '@/store';
+	import {
+		ADD_PROJETO,
+		ALTERAR_PROJETO,
+	} from '@/store/mutation-types';
 
 	export default defineComponent({
 		name: 'Formulario',
@@ -56,13 +60,13 @@
 			salvar() {
 				if (this.nomeDoProjeto) {
 					if (this.id) {
-						this.store.commit('ALTERAR_PROJETO', {
+						this.store.commit(ALTERAR_PROJETO, {
 							id: this.id,
 							nome: this.nomeDoProjeto,
 						});
 					} else {
 						this.store.commit(
-							'ADD_PROJETO',
+							ADD_PROJETO,
 							this.nomeDoProjeto
 						);
 					}

@@ -52,6 +52,7 @@
 	import { computed, defineComponent } from 'vue';
 
 	import { store } from '@/store';
+	import { REMOVER_PROJETO } from '@/store/mutation-types';
 
 	export default defineComponent({
 		name: 'Lista',
@@ -64,7 +65,7 @@
 		},
 		methods: {
 			excluir(id: string) {
-				this.store.commit('REMOVER_PROJETO', id);
+				this.store.commit(REMOVER_PROJETO, id);
 			},
 		},
 	});
