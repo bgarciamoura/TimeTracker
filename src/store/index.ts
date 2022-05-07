@@ -23,7 +23,13 @@ export const store = createStore<State>({
 			} as IProjeto;
 			state.projetos.push(projeto);
 		},
-		REMOVE_PROJETO: (state, idDoProjeto: string) => {
+		ALTERAR_PROJETO: (state, projeto: IProjeto) => {
+			const index = state.projetos.findIndex(
+				(proj) => proj.id === projeto.id
+			);
+			state.projetos[index] = projeto;
+		},
+		REMOVER_PROJETO: (state, idDoProjeto: string) => {
 			state.projetos = state.projetos.filter(
 				(projeto) => projeto.id !== idDoProjeto
 			);
