@@ -51,8 +51,12 @@
 <script lang="ts">
 	import { computed, defineComponent } from 'vue';
 
+	import { TipoNotificacao } from '@/interfaces/INotificacao';
 	import { store } from '@/store';
-	import { REMOVER_PROJETO } from '@/store/mutation-types';
+	import {
+		NOTIFICAR,
+		REMOVER_PROJETO,
+	} from '@/store/mutation-types';
 
 	export default defineComponent({
 		name: 'Lista',
@@ -66,6 +70,11 @@
 		methods: {
 			excluir(id: string) {
 				this.store.commit(REMOVER_PROJETO, id);
+				this.store.commit(NOTIFICAR, {
+					titulo: 'Projeto apagado',
+					texto: 'O projeto foi apagado',
+					tipo: TipoNotificacao.SUCESSO,
+				});
 			},
 		},
 	});

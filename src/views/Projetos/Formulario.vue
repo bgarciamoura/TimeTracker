@@ -30,10 +30,12 @@
 <script lang="ts">
 	import { defineComponent } from 'vue';
 
+	import { TipoNotificacao } from '@/interfaces/INotificacao';
 	import { useStore } from '@/store';
 	import {
 		ADD_PROJETO,
 		ALTERAR_PROJETO,
+		NOTIFICAR,
 	} from '@/store/mutation-types';
 
 	export default defineComponent({
@@ -71,9 +73,18 @@
 						);
 					}
 					this.nomeDoProjeto = '';
+					this.store.commit(NOTIFICAR, {
+						titulo: 'Projeto salvo',
+						texto: 'O projeto foi salvo com sucesso',
+						tipo: TipoNotificacao.SUCESSO,
+					});
 					this.$router.push('/projetos');
 				} else {
-					alert('Preencha o nome do projeto');
+					this.store.commit(NOTIFICAR, {
+						titulo: 'Atenção',
+						texto: 'Preencha o nome do projeto',
+						tipo: TipoNotificacao.ATENCAO,
+					});
 				}
 			},
 		},

@@ -42,7 +42,9 @@
 	import { useStore } from 'vuex';
 
 	import Temporizador from './Temporizador.vue';
+	import { TipoNotificacao } from '@/interfaces/INotificacao';
 	import { key } from '@/store';
+	import { NOTIFICAR } from '@/store/mutation-types';
 
 	export default defineComponent({
 		name: 'FormularioTempo',
@@ -63,12 +65,24 @@
 		},
 		methods: {
 			finalizarTarefa(tempoDecorrido: number): void {
+				const projeto = this.projetos.find(
+					(projeto) => projeto.id === this.idProjeto
+				);
+
+				if (!projeto) {
+					this.store.commit(NOTIFICAR, {
+						titulo: 'Atenção',
+						texto: 'Você deve selecionar um projeto antes de parar o tempo!',
+						tipo: TipoNotificacao.ATENCAO,
+					});
+
+					return;
+				}
+
 				this.$emit('aoSalvarTarefa', {
 					duracaoEmSegundos: tempoDecorrido,
 					descricao: this.tarefa,
-					projeto: this.projetos.find(
-						(projeto) => projeto.id === this.idProjeto
-					),
+					projeto,
 				});
 				this.tarefa = '';
 			},
@@ -77,6 +91,7 @@
 			const store = useStore(key);
 			return {
 				projetos: computed(() => store.state.projetos),
+				store,
 			};
 		},
 	});
