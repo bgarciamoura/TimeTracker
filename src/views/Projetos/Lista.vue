@@ -67,7 +67,9 @@
 			store.dispatch(OBTER_PROJETOS);
 			return {
 				store,
-				projetos: computed(() => store.state.projetos),
+				projetos: computed(() => {
+					return store.state.project.projects;
+				}),
 			};
 		},
 		mixins: [notificacaoMixin],
