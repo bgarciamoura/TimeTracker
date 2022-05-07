@@ -30,6 +30,8 @@
 <script lang="ts">
 	import { defineComponent } from 'vue';
 
+	import { useNotificador } from '@/hooks/notificador';
+	import { TipoNotificacao } from '@/interfaces/INotificacao';
 	import { useStore } from '@/store';
 	import {
 		ADD_PROJETO,
@@ -71,16 +73,28 @@
 						);
 					}
 					this.nomeDoProjeto = '';
+
+					this.notificar(
+						TipoNotificacao.SUCESSO,
+						'Projeto salvo',
+						'O projeto foi salvo com sucesso'
+					);
 					this.$router.push('/projetos');
 				} else {
-					alert('Preencha o nome do projeto');
+					this.notificar(
+						TipoNotificacao.ATENCAO,
+						'Atenção',
+						'Preencha o nome do projeto'
+					);
 				}
 			},
 		},
 		setup() {
 			const store = useStore();
+			const { notificar } = useNotificador();
 			return {
 				store,
+				notificar,
 			};
 		},
 	});

@@ -51,7 +51,9 @@
 <script lang="ts">
 	import { computed, defineComponent } from 'vue';
 
-	import { useStore } from '@/store';
+	import { TipoNotificacao } from '@/interfaces/INotificacao';
+	import { notificacaoMixin } from '@/mixins/notificar';
+	import { store, useStore } from '@/store';
 	import { OBTER_PROJETOS } from '@/store/action-types';
 	import { REMOVER_PROJETO } from '@/store/mutation-types';
 
@@ -66,9 +68,15 @@
 				projetos: computed(() => store.state.projetos),
 			};
 		},
+		mixins: [notificacaoMixin],
 		methods: {
 			excluir(id: string) {
 				this.store.commit(REMOVER_PROJETO, id);
+				this.notificar(
+					'Projeto apagado',
+					'O projeto foi apagado',
+					TipoNotificacao.SUCESSO
+				);
 			},
 		},
 	});

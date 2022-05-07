@@ -23,6 +23,9 @@
 
 	import Botao from './Botao.vue';
 	import CronometroSegundos from './Cronometro.vue';
+	import { TipoNotificacao } from '@/interfaces/INotificacao';
+	import { notificacaoMixin } from '@/mixins/notificar';
+	import { useStore } from '@/store';
 
 	export default defineComponent({
 		name: 'Temporizador',
@@ -37,6 +40,12 @@
 			},
 		},
 		emits: ['temporizadorFinalizado'],
+		setup() {
+			return {
+				store: useStore(),
+			};
+		},
+		mixins: [notificacaoMixin],
 		data() {
 			return {
 				tempoEmSegundos: 0,
@@ -46,11 +55,13 @@
 		},
 		methods: {
 			iniciar() {
-				console.log(this.existeTarefa);
 				if (!this.existeTarefa) {
-					alert(
-						'Você deve digitar uma tarefa antes de iniciar o cronômetro!'
+					this.notificar(
+						'Atenção',
+						'Você deve digitar uma tarefa antes de iniciar o cronômetro!',
+						TipoNotificacao.ATENCAO
 					);
+
 					return;
 				}
 				this.cronometroContando = !this.cronometroContando;
@@ -60,11 +71,11 @@
 			},
 			finalizar() {
 				this.cronometroContando = !this.cronometroContando;
-				clearInterval(this.temporizador);
 				this.$emit(
 					'temporizadorFinalizado',
 					this.tempoEmSegundos
 				);
+				clearInterval(this.temporizador);
 				this.tempoEmSegundos = 0;
 			},
 		},

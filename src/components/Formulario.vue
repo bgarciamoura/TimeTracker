@@ -42,6 +42,8 @@
 	import { useStore } from 'vuex';
 
 	import Temporizador from './Temporizador.vue';
+	import { TipoNotificacao } from '@/interfaces/INotificacao';
+	import { notificacaoMixin } from '@/mixins/notificar';
 	import { key } from '@/store';
 
 	export default defineComponent({
@@ -56,6 +58,7 @@
 				idProjeto: '',
 			};
 		},
+		mixins: [notificacaoMixin],
 		computed: {
 			existeTarefa(): boolean {
 				return this.tarefa === '' ? false : true;
@@ -63,12 +66,24 @@
 		},
 		methods: {
 			finalizarTarefa(tempoDecorrido: number): void {
+				const projeto = this.projetos.find(
+					(projeto) => projeto.id === this.idProjeto
+				);
+
+				if (!projeto) {
+					this.notificar(
+						'Atenção',
+						'Você deve selecionar um projeto antes de parar o tempo!',
+						TipoNotificacao.ATENCAO
+					);
+
+					return;
+				}
+
 				this.$emit('aoSalvarTarefa', {
 					duracaoEmSegundos: tempoDecorrido,
 					descricao: this.tarefa,
-					projeto: this.projetos.find(
-						(projeto) => projeto.id === this.idProjeto
-					),
+					projeto,
 				});
 				this.tarefa = '';
 			},
@@ -77,6 +92,7 @@
 			const store = useStore(key);
 			return {
 				projetos: computed(() => store.state.projetos),
+				store,
 			};
 		},
 	});
