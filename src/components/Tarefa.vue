@@ -1,8 +1,11 @@
 <template>
 	<Box>
 		<div class="columns">
-			<div class="column is-11">
+			<div class="column is-4">
 				{{ tarefa.descricao || 'Tarefa sem descrição' }}
+			</div>
+			<div class="column is-3">
+				{{ tarefa.projeto?.nome || 'Tarefa sem projeto' }}
 			</div>
 			<div class="column">
 				<cronometro-segundos
