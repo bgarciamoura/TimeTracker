@@ -52,11 +52,12 @@
 		},
 		mounted() {
 			if (this.id) {
-				const projeto = this.store.state.projetos.find(
-					(projeto) => {
-						return projeto.id == this.id;
-					}
-				);
+				const projeto =
+					this.store.state.project.projects.find(
+						(projeto) => {
+							return projeto.id == this.id;
+						}
+					);
 				this.nomeDoProjeto = projeto?.nome || '';
 			}
 		},
