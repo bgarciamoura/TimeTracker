@@ -33,6 +33,14 @@
 								<i class="fas fa-pencil-alt"></i>
 							</span>
 						</router-link>
+						<button
+							class="button ml-2 is-danger"
+							@click="excluir(projeto.id)"
+						>
+							<span class="icon is-small">
+								<i class="fas fa-trash"></i>
+							</span>
+						</button>
 					</td>
 				</tr>
 			</tbody>
@@ -50,8 +58,14 @@
 		components: {},
 		setup() {
 			return {
+				store,
 				projetos: computed(() => store.state.projetos),
 			};
+		},
+		methods: {
+			excluir(id: string) {
+				this.store.commit('REMOVER_PROJETO', id);
+			},
 		},
 	});
 </script>
