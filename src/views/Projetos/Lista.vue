@@ -53,9 +53,11 @@
 
 	import { TipoNotificacao } from '@/interfaces/INotificacao';
 	import { notificacaoMixin } from '@/mixins/notificar';
-	import { store, useStore } from '@/store';
-	import { OBTER_PROJETOS } from '@/store/action-types';
-	import { REMOVER_PROJETO } from '@/store/mutation-types';
+	import { useStore } from '@/store';
+	import {
+		OBTER_PROJETOS,
+		REMOVER_PROJETOS,
+	} from '@/store/action-types';
 
 	export default defineComponent({
 		name: 'Lista',
@@ -71,12 +73,13 @@
 		mixins: [notificacaoMixin],
 		methods: {
 			excluir(id: string) {
-				this.store.commit(REMOVER_PROJETO, id);
-				this.notificar(
-					'Projeto apagado',
-					'O projeto foi apagado',
-					TipoNotificacao.SUCESSO
-				);
+				this.store.dispatch(REMOVER_PROJETOS, id).then(() => {
+					this.notificar(
+						'Projeto apagado',
+						'O projeto foi apagado',
+						TipoNotificacao.SUCESSO
+					);
+				});
 			},
 		},
 	});
