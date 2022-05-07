@@ -24,8 +24,8 @@
 	import Botao from './Botao.vue';
 	import CronometroSegundos from './Cronometro.vue';
 	import { TipoNotificacao } from '@/interfaces/INotificacao';
+	import { notificacaoMixin } from '@/mixins/notificar';
 	import { useStore } from '@/store';
-	import { NOTIFICAR } from '@/store/mutation-types';
 
 	export default defineComponent({
 		name: 'Temporizador',
@@ -45,6 +45,7 @@
 				store: useStore(),
 			};
 		},
+		mixins: [notificacaoMixin],
 		data() {
 			return {
 				tempoEmSegundos: 0,
@@ -55,11 +56,12 @@
 		methods: {
 			iniciar() {
 				if (!this.existeTarefa) {
-					this.store.commit(NOTIFICAR, {
-						titulo: 'Atenção',
-						texto: 'Você deve digitar uma tarefa antes de iniciar o cronômetro!',
-						tipo: TipoNotificacao.ATENCAO,
-					});
+					this.notificar(
+						'Atenção',
+						'Você deve digitar uma tarefa antes de iniciar o cronômetro!',
+						TipoNotificacao.ATENCAO
+					);
+
 					return;
 				}
 				this.cronometroContando = !this.cronometroContando;
