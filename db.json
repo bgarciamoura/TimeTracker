@@ -8,5 +8,25 @@
       "id": 6,
       "nome": "TS em três meses"
     }
+  ],
+  "tarefas": [
+    {
+      "id": 1,
+      "duracaoEmSegundos": 3600,
+      "descricao": "Tarefa 1",
+      "projeto": {
+        "id": 5,
+        "nome": "VueJS em dois meses"
+      }
+    },
+    {
+      "duracaoEmSegundos": 3,
+      "descricao": "refatorando vuex",
+      "projeto": {
+        "id": 5,
+        "nome": "VueJS em dois meses"
+      },
+      "id": 2
+    }
   ]
 }

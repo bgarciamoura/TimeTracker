@@ -13,12 +13,18 @@
 </template>
 
 <script lang="ts">
-	import { defineComponent } from 'vue';
+	import { computed, defineComponent } from 'vue';
 
 	import Box from '../../components/Box.vue';
 	import FormularioTempo from '../../components/Formulario.vue';
 	import Tarefa from '../../components/Tarefa.vue';
-	import { ITarefa } from '../../interfaces/ITarefa';
+	import { ITarefa } from '@/interfaces/ITarefa';
+	import { useStore } from '@/store';
+	import {
+		CADASTRAR_TAREFA,
+		OBTER_PROJETOS,
+		OBTER_TAREFAS,
+	} from '@/store/action-types';
 
 	export default defineComponent({
 		name: 'Tarefas',
@@ -27,9 +33,14 @@
 			Tarefa,
 			Box,
 		},
-		data() {
+		setup() {
+			const store = useStore();
+			store.dispatch(OBTER_TAREFAS);
+			store.dispatch(OBTER_PROJETOS);
+			const tarefas = computed(() => store.state.tarefas);
 			return {
-				tarefas: [] as ITarefa[],
+				store,
+				tarefas,
 			};
 		},
 		computed: {
@@ -39,7 +50,7 @@
 		},
 		methods: {
 			salvarTarefa(tarefa: ITarefa): void {
-				this.tarefas.push(tarefa);
+				this.store.dispatch(CADASTRAR_TAREFA, tarefa);
 			},
 		},
 	});

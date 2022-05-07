@@ -6,22 +6,28 @@ import { createStore, useStore as vuexUseStore } from 'vuex';
 import {
 	ALTERAR_PROJETOS,
 	CADASTRAR_PROJETO,
+	CADASTRAR_TAREFA,
 	OBTER_PROJETOS,
+	OBTER_TAREFAS,
 	REMOVER_PROJETOS,
 } from './action-types';
 import {
 	ADD_PROJETO,
+	ADICIONAR_TAREFA,
 	ALTERAR_PROJETO,
 	DEFINIR_PROJETOS,
+	DEFINIR_TAREFAS,
 	NOTIFICAR,
 	REMOVER_PROJETO,
 } from './mutation-types';
 import { clienteHttp } from '@/http';
 import { INotificacao } from '@/interfaces/INotificacao';
 import IProjeto from '@/interfaces/IProjeto';
+import { ITarefa } from '@/interfaces/ITarefa';
 
 interface State {
 	projetos: IProjeto[];
+	tarefas: ITarefa[];
 	notificacoes: INotificacao[];
 }
 
@@ -30,6 +36,7 @@ export const key: InjectionKey<Store<State>> = Symbol();
 export const store = createStore<State>({
 	state: {
 		projetos: [],
+		tarefas: [],
 		notificacoes: [],
 	},
 	mutations: {
@@ -64,6 +71,12 @@ export const store = createStore<State>({
 				);
 			}, 3000);
 		},
+		[DEFINIR_TAREFAS]: (state, tarefas: ITarefa[]) => {
+			state.tarefas = tarefas;
+		},
+		[ADICIONAR_TAREFA]: (state, tarefa: ITarefa) => {
+			state.tarefas.push(tarefa);
+		},
 	},
 	actions: {
 		[OBTER_PROJETOS]({ commit }): void {
@@ -92,6 +105,18 @@ export const store = createStore<State>({
 			clienteHttp.delete(`/projetos/${id}`).then(() => {
 				commit(REMOVER_PROJETO, id);
 			});
+		},
+		[OBTER_TAREFAS]({ commit }): void {
+			clienteHttp.get('/tarefas').then((response) => {
+				commit(DEFINIR_TAREFAS, response.data);
+			});
+		},
+		[CADASTRAR_TAREFA](contexto, tarefa: ITarefa): Promise<void> {
+			return clienteHttp
+				.post('/tarefas', tarefa)
+				.then((response) => {
+					contexto.commit(ADICIONAR_TAREFA, response.data);
+				});
 		},
 	},
 });
