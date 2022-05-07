@@ -53,13 +53,16 @@
 
 	import { TipoNotificacao } from '@/interfaces/INotificacao';
 	import { notificacaoMixin } from '@/mixins/notificar';
-	import { store } from '@/store';
+	import { store, useStore } from '@/store';
+	import { OBTER_PROJETOS } from '@/store/action-types';
 	import { REMOVER_PROJETO } from '@/store/mutation-types';
 
 	export default defineComponent({
 		name: 'Lista',
 		components: {},
 		setup() {
+			const store = useStore();
+			store.dispatch(OBTER_PROJETOS);
 			return {
 				store,
 				projetos: computed(() => store.state.projetos),

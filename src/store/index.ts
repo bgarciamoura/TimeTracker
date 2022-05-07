@@ -2,12 +2,14 @@ import type { InjectionKey } from 'vue';
 import type { Store } from 'vuex';
 import { createStore, useStore as vuexUseStore } from 'vuex';
 
+import { OBTER_PROJETOS } from './action-types';
 import {
 	ADD_PROJETO,
 	ALTERAR_PROJETO,
 	NOTIFICAR,
 	REMOVER_PROJETO,
 } from './mutation-types';
+import { clienteHttp } from '@/http';
 import { INotificacao } from '@/interfaces/INotificacao';
 import IProjeto from '@/interfaces/IProjeto';
 
@@ -51,6 +53,13 @@ export const store = createStore<State>({
 					(notificacao) => notificacao.id !== notificacao.id
 				);
 			}, 3000);
+		},
+	},
+	actions: {
+		[OBTER_PROJETOS]({ commit }) {
+			clienteHttp.get('/projetos').then((response) => {
+				commit(ADD_PROJETO, response.data);
+			});
 		},
 	},
 });
