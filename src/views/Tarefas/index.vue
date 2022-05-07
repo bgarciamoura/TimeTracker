@@ -92,7 +92,7 @@
 			const store = useStore();
 			store.dispatch(OBTER_TAREFAS);
 			store.dispatch(OBTER_PROJETOS);
-			const tarefas = computed(() => store.state.tarefas);
+			const tarefas = computed(() => store.state.task.tasks);
 			return {
 				store,
 				tarefas,
