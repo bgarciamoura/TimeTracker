@@ -43,8 +43,8 @@
 
 	import Temporizador from './Temporizador.vue';
 	import { TipoNotificacao } from '@/interfaces/INotificacao';
+	import { notificacaoMixin } from '@/mixins/notificar';
 	import { key } from '@/store';
-	import { NOTIFICAR } from '@/store/mutation-types';
 
 	export default defineComponent({
 		name: 'FormularioTempo',
@@ -58,6 +58,7 @@
 				idProjeto: '',
 			};
 		},
+		mixins: [notificacaoMixin],
 		computed: {
 			existeTarefa(): boolean {
 				return this.tarefa === '' ? false : true;
@@ -70,11 +71,11 @@
 				);
 
 				if (!projeto) {
-					this.store.commit(NOTIFICAR, {
-						titulo: 'Atenção',
-						texto: 'Você deve selecionar um projeto antes de parar o tempo!',
-						tipo: TipoNotificacao.ATENCAO,
-					});
+					this.notificar(
+						'Atenção',
+						'Você deve selecionar um projeto antes de parar o tempo!',
+						TipoNotificacao.ATENCAO
+					);
 
 					return;
 				}

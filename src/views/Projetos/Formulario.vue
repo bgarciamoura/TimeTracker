@@ -31,11 +31,11 @@
 	import { defineComponent } from 'vue';
 
 	import { TipoNotificacao } from '@/interfaces/INotificacao';
+	import { notificacaoMixin } from '@/mixins/notificar';
 	import { useStore } from '@/store';
 	import {
 		ADD_PROJETO,
 		ALTERAR_PROJETO,
-		NOTIFICAR,
 	} from '@/store/mutation-types';
 
 	export default defineComponent({
@@ -45,6 +45,7 @@
 				type: String,
 			},
 		},
+		mixins: [notificacaoMixin],
 		data() {
 			return {
 				nomeDoProjeto: '',
@@ -73,18 +74,19 @@
 						);
 					}
 					this.nomeDoProjeto = '';
-					this.store.commit(NOTIFICAR, {
-						titulo: 'Projeto salvo',
-						texto: 'O projeto foi salvo com sucesso',
-						tipo: TipoNotificacao.SUCESSO,
-					});
+
+					this.notificar(
+						'Projeto salvo',
+						'O projeto foi salvo com sucesso',
+						TipoNotificacao.SUCESSO
+					);
 					this.$router.push('/projetos');
 				} else {
-					this.store.commit(NOTIFICAR, {
-						titulo: 'Atenção',
-						texto: 'Preencha o nome do projeto',
-						tipo: TipoNotificacao.ATENCAO,
-					});
+					this.notificar(
+						'Atenção',
+						'Preencha o nome do projeto',
+						TipoNotificacao.ATENCAO
+					);
 				}
 			},
 		},
