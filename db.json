@@ -13,7 +13,7 @@
     {
       "id": 1,
       "duracaoEmSegundos": 3600,
-      "descricao": "Primeira Tarefa do Vue",
+      "descricao": "Primeira Tarefa do Vuex",
       "projeto": {
         "id": 5,
         "nome": "VueJS em dois meses"
@@ -36,6 +36,15 @@
         "nome": "VueJS em dois meses"
       },
       "id": 3
+    },
+    {
+      "duracaoEmSegundos": 1,
+      "descricao": "Testando interfaces TS",
+      "projeto": {
+        "id": 6,
+        "nome": "TS em três meses"
+      },
+      "id": 4
     }
   ]
 }
