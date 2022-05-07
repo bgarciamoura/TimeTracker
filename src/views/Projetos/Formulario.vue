@@ -34,9 +34,9 @@
 	import { TipoNotificacao } from '@/interfaces/INotificacao';
 	import { useStore } from '@/store';
 	import {
-		ADD_PROJETO,
-		ALTERAR_PROJETO,
-	} from '@/store/mutation-types';
+		ALTERAR_PROJETOS,
+		CADASTRAR_PROJETO,
+	} from '@/store/action-types';
 
 	export default defineComponent({
 		name: 'Formulario',
@@ -52,8 +52,10 @@
 		},
 		mounted() {
 			if (this.id) {
-				const projeto = useStore().state.projetos.find(
-					(projeto) => projeto.id === this.id
+				const projeto = this.store.state.projetos.find(
+					(projeto) => {
+						return projeto.id == this.id;
+					}
 				);
 				this.nomeDoProjeto = projeto?.nome || '';
 			}
@@ -62,24 +64,24 @@
 			salvar() {
 				if (this.nomeDoProjeto) {
 					if (this.id) {
-						this.store.commit(ALTERAR_PROJETO, {
-							id: this.id,
-							nome: this.nomeDoProjeto,
-						});
+						this.store
+							.dispatch(ALTERAR_PROJETOS, {
+								id: this.id,
+								nome: this.nomeDoProjeto,
+							})
+							.then(() => {
+								this.handleSuccessNotification();
+							});
 					} else {
-						this.store.commit(
-							ADD_PROJETO,
-							this.nomeDoProjeto
-						);
+						this.store
+							.dispatch(
+								CADASTRAR_PROJETO,
+								this.nomeDoProjeto
+							)
+							.then(() => {
+								this.handleSuccessNotification();
+							});
 					}
-					this.nomeDoProjeto = '';
-
-					this.notificar(
-						TipoNotificacao.SUCESSO,
-						'Projeto salvo',
-						'O projeto foi salvo com sucesso'
-					);
-					this.$router.push('/projetos');
 				} else {
 					this.notificar(
 						TipoNotificacao.ATENCAO,
@@ -87,6 +89,16 @@
 						'Preencha o nome do projeto'
 					);
 				}
+			},
+			handleSuccessNotification() {
+				this.nomeDoProjeto = '';
+
+				this.notificar(
+					TipoNotificacao.SUCESSO,
+					'Projeto salvo',
+					'O projeto foi salvo com sucesso'
+				);
+				this.$router.push('/projetos');
 			},
 		},
 		setup() {
