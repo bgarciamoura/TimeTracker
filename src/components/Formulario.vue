@@ -1,56 +1,90 @@
 <template>
-    <div class="box formulario">
-        <div class="columns">
-            <div class="column is-8" role="form" aria-label="Formulário para criação de uma nova tarefa">
-                <input
-                    type="text"
-                    class="input"
-                    placeholder="Qual tarefa você deseja iniciar?"
-                    v-model="tarefa"
-                />
-            </div>
-            <div class="column">
-                <temporizador @temporizadorFinalizado="finalizarTarefa" :existeTarefa="existeTarefa" />
-            </div>
-        </div>
-    </div>
+	<div class="box formulario">
+		<div class="columns">
+			<div
+				class="column is-5"
+				role="form"
+				aria-label="Formulário para criação de uma nova tarefa"
+			>
+				<input
+					type="text"
+					class="input"
+					placeholder="Qual tarefa você deseja iniciar?"
+					v-model="tarefa"
+				/>
+			</div>
+			<div class="column is-4">
+				<div class="select">
+					<select v-model="idProjeto">
+						<option value="">Selecione o Projeto</option>
+						<option
+							:value="projeto.id"
+							:key="projeto.id"
+							v-for="projeto in projetos"
+						>
+							{{ projeto.nome }}
+						</option>
+					</select>
+				</div>
+			</div>
+			<div class="column">
+				<temporizador
+					@temporizadorFinalizado="finalizarTarefa"
+					:existeTarefa="existeTarefa"
+				/>
+			</div>
+		</div>
+	</div>
 </template>
 
 <script lang="ts">
-    import { defineComponent } from 'vue';
-    import Temporizador from './Temporizador.vue';
+	import { computed, defineComponent } from 'vue';
+	import { useStore } from 'vuex';
 
-    export default defineComponent({
-        name: 'FormularioTempo',
-        components: {
-            Temporizador,
-        },
-        emits: ['aoSalvarTarefa'],
-        data() {
-            return {
-                tarefa: '',
-            };
-        },
-        computed: {
-            existeTarefa(): boolean {
-                return this.tarefa === '' ? false : true;
-            },
-        },
-        methods: {
-            finalizarTarefa(tempoDecorrido: number): void {
-                this.$emit('aoSalvarTarefa', {
-                    duracaoEmSegundos: tempoDecorrido,
-                    descricao: this.tarefa,
-                });
-                this.tarefa = '';
-            },
-        },
-    });
+	import Temporizador from './Temporizador.vue';
+	import { key } from '@/store';
+
+	export default defineComponent({
+		name: 'FormularioTempo',
+		components: {
+			Temporizador,
+		},
+		emits: ['aoSalvarTarefa'],
+		data() {
+			return {
+				tarefa: '',
+				idProjeto: '',
+			};
+		},
+		computed: {
+			existeTarefa(): boolean {
+				return this.tarefa === '' ? false : true;
+			},
+		},
+		methods: {
+			finalizarTarefa(tempoDecorrido: number): void {
+				this.$emit('aoSalvarTarefa', {
+					duracaoEmSegundos: tempoDecorrido,
+					descricao: this.tarefa,
+					projeto: this.projetos.find(
+						(projeto) => projeto.id === this.idProjeto
+					),
+				});
+				this.tarefa = '';
+			},
+		},
+		setup() {
+			const store = useStore(key);
+			return {
+				projetos: computed(() => store.state.projetos),
+			};
+		},
+	});
 </script>
 
 <style>
-    .formulario {
-        color: var(--text-color);
-        background-color: var(--primary-background-color);
-    }
+	.formulario {
+		color: var(--text-color);
+		background-color: var(--primary-background-color);
+	}
 </style>
