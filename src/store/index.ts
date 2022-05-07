@@ -5,6 +5,7 @@ import { createStore, useStore as vuexUseStore } from 'vuex';
 
 import {
 	ALTERAR_PROJETOS,
+	ALTERAR_TAREFA,
 	CADASTRAR_PROJETO,
 	CADASTRAR_TAREFA,
 	OBTER_PROJETOS,
@@ -15,6 +16,7 @@ import {
 	ADD_PROJETO,
 	ADICIONAR_TAREFA,
 	ALTERAR_PROJETO,
+	ALTERA_TAREFA,
 	DEFINIR_PROJETOS,
 	DEFINIR_TAREFAS,
 	NOTIFICAR,
@@ -77,6 +79,12 @@ export const store = createStore<State>({
 		[ADICIONAR_TAREFA]: (state, tarefa: ITarefa) => {
 			state.tarefas.push(tarefa);
 		},
+		[ALTERA_TAREFA]: (state, tarefa: ITarefa) => {
+			const index = state.tarefas.findIndex(
+				(tar) => tar.id === tarefa.id
+			);
+			state.tarefas[index] = tarefa;
+		},
 	},
 	actions: {
 		[OBTER_PROJETOS]({ commit }): void {
@@ -111,11 +119,24 @@ export const store = createStore<State>({
 				commit(DEFINIR_TAREFAS, response.data);
 			});
 		},
-		[CADASTRAR_TAREFA](contexto, tarefa: ITarefa): Promise<void> {
-			return clienteHttp
-				.post('/tarefas', tarefa)
+		async [CADASTRAR_TAREFA](
+			contexto,
+			tarefa: ITarefa
+		): Promise<void> {
+			const response = await clienteHttp.post(
+				'/tarefas',
+				tarefa
+			);
+			contexto.commit(ADICIONAR_TAREFA, response.data);
+		},
+		async [ALTERAR_TAREFA](
+			contexto,
+			tarefa: ITarefa
+		): Promise<void> {
+			await clienteHttp
+				.put(`/tarefas/${tarefa.id}`, tarefa)
 				.then((response) => {
-					contexto.commit(ADICIONAR_TAREFA, response.data);
+					contexto.commit(ALTERA_TAREFA, response.data);
 				});
 		},
 	},
