@@ -29,6 +29,7 @@
 
 <script lang="ts">
 	import { defineComponent, ref } from 'vue';
+	import { useRouter } from 'vue-router';
 
 	import { useNotificador } from '@/hooks/notificador';
 	import { TipoNotificacao } from '@/interfaces/INotificacao';
@@ -45,52 +46,12 @@
 				type: String,
 			},
 		},
-		methods: {
-			salvar() {
-				if (this.nomeDoProjeto) {
-					if (this.id) {
-						this.store
-							.dispatch(ALTERAR_PROJETOS, {
-								id: this.id,
-								nome: this.nomeDoProjeto,
-							})
-							.then(() => {
-								this.handleSuccessNotification();
-							});
-					} else {
-						this.store
-							.dispatch(
-								CADASTRAR_PROJETO,
-								this.nomeDoProjeto
-							)
-							.then(() => {
-								this.handleSuccessNotification();
-							});
-					}
-				} else {
-					this.notificar(
-						TipoNotificacao.ATENCAO,
-						'Atenção',
-						'Preencha o nome do projeto'
-					);
-				}
-			},
-			handleSuccessNotification() {
-				this.nomeDoProjeto = '';
-
-				this.notificar(
-					TipoNotificacao.SUCESSO,
-					'Projeto salvo',
-					'O projeto foi salvo com sucesso'
-				);
-				this.$router.push('/projetos');
-			},
-		},
 		setup(props) {
 			const id = ref(props.id);
-			const store = useStore();
-			const { notificar } = useNotificador();
 			const nomeDoProjeto = ref('');
+			const store = useStore();
+			const router = useRouter();
+			const { notificar } = useNotificador();
 
 			if (id.value) {
 				const projeto = store.state.project.projects.find(
@@ -101,10 +62,50 @@
 				nomeDoProjeto.value = projeto?.nome || '';
 			}
 
+			const salvar = () => {
+				if (nomeDoProjeto.value) {
+					if (id.value) {
+						store
+							.dispatch(ALTERAR_PROJETOS, {
+								id: id.value,
+								nome: nomeDoProjeto.value,
+							})
+							.then(() => {
+								handleSuccessNotification();
+							});
+					} else {
+						store
+							.dispatch(
+								CADASTRAR_PROJETO,
+								nomeDoProjeto.value
+							)
+							.then(() => {
+								handleSuccessNotification();
+							});
+					}
+				} else {
+					notificar(
+						TipoNotificacao.ATENCAO,
+						'Atenção',
+						'Preencha o nome do projeto'
+					);
+				}
+			};
+
+			const handleSuccessNotification = () => {
+				nomeDoProjeto.value = '';
+
+				notificar(
+					TipoNotificacao.SUCESSO,
+					'Projeto salvo',
+					'O projeto foi salvo com sucesso'
+				);
+				router.push('/projetos');
+			};
+
 			return {
-				store,
-				notificar,
 				nomeDoProjeto,
+				salvar,
 			};
 		},
 	});
