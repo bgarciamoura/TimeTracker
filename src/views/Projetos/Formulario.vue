@@ -28,7 +28,7 @@
 </template>
 
 <script lang="ts">
-	import { defineComponent } from 'vue';
+	import { defineComponent, ref } from 'vue';
 
 	import { useNotificador } from '@/hooks/notificador';
 	import { TipoNotificacao } from '@/interfaces/INotificacao';
@@ -44,22 +44,6 @@
 			id: {
 				type: String,
 			},
-		},
-		data() {
-			return {
-				nomeDoProjeto: '',
-			};
-		},
-		mounted() {
-			if (this.id) {
-				const projeto =
-					this.store.state.project.projects.find(
-						(projeto) => {
-							return projeto.id == this.id;
-						}
-					);
-				this.nomeDoProjeto = projeto?.nome || '';
-			}
 		},
 		methods: {
 			salvar() {
@@ -102,12 +86,25 @@
 				this.$router.push('/projetos');
 			},
 		},
-		setup() {
+		setup(props) {
+			const id = ref(props.id);
 			const store = useStore();
 			const { notificar } = useNotificador();
+			const nomeDoProjeto = ref('');
+
+			if (id.value) {
+				const projeto = store.state.project.projects.find(
+					(projeto) => {
+						return projeto.id == id.value;
+					}
+				);
+				nomeDoProjeto.value = projeto?.nome || '';
+			}
+
 			return {
 				store,
 				notificar,
+				nomeDoProjeto,
 			};
 		},
 	});
