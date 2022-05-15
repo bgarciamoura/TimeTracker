@@ -10,7 +10,7 @@
 					type="text"
 					class="input"
 					placeholder="Qual tarefa você deseja iniciar?"
-					v-model="tarefa"
+					v-model="descricao"
 				/>
 			</div>
 			<div class="column is-4">
@@ -38,7 +38,7 @@
 </template>
 
 <script lang="ts">
-	import { computed, defineComponent } from 'vue';
+	import { computed, defineComponent, ref } from 'vue';
 	import { useStore } from 'vuex';
 
 	import Temporizador from './Temporizador.vue';
@@ -55,23 +55,33 @@
 		data() {
 			return {
 				tarefa: '',
-				idProjeto: '',
 			};
 		},
-		mixins: [notificacaoMixin],
 		computed: {
 			existeTarefa(): boolean {
 				return this.tarefa === '' ? false : true;
 			},
 		},
-		methods: {
-			finalizarTarefa(tempoDecorrido: number): void {
-				const projeto = this.projetos.find(
-					(projeto) => projeto.id === this.idProjeto
+		methods: {},
+		setup(props, context) {
+			const { emit } = context;
+			const store = useStore(key);
+
+			const descricao = ref('');
+			const idProjeto = ref('');
+			const projetos = computed(
+				() => store.state.project.projects
+			);
+
+			const finalizarTarefa = (
+				tempoDecorrido: number
+			): void => {
+				const projeto = projetos.value.find(
+					(projeto) => projeto.id === idProjeto.value
 				);
 
 				if (!projeto) {
-					this.notificar(
+					notificacaoMixin.methods.notificar(
 						'Atenção',
 						'Você deve selecionar um projeto antes de parar o tempo!',
 						TipoNotificacao.ATENCAO
@@ -80,21 +90,20 @@
 					return;
 				}
 
-				this.$emit('aoSalvarTarefa', {
+				emit('aoSalvarTarefa', {
 					duracaoEmSegundos: tempoDecorrido,
-					descricao: this.tarefa,
+					descricao: descricao.value,
 					projeto,
 				});
-				this.tarefa = '';
-			},
-		},
-		setup() {
-			const store = useStore(key);
+				descricao.value = '';
+			};
+
 			return {
-				projetos: computed(
-					() => store.state.project.projects
-				),
+				descricao,
+				idProjeto,
+				projetos,
 				store,
+				finalizarTarefa,
 			};
 		},
 	});
