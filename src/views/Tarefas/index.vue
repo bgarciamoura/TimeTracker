@@ -23,15 +23,8 @@
 		<box v-if="listaEstaVazia"
 			>Você não está muito produtivo hoje! 🙁</box
 		>
-	</div>
-	<div
-		class="modal"
-		:class="{ 'is-active': tarefaSelecionada }"
-		v-if="tarefaSelecionada"
-	>
-		<div class="modal-background"></div>
-		<div class="modal-card">
-			<header class="modal-card-head">
+		<modal :mostrarModal="tarefaSelecionada != null">
+			<template v-slot:cabecalho>
 				<p class="modal-card-title">
 					Editando a tarefa
 					{{
@@ -44,8 +37,8 @@
 					aria-label="close"
 					@click="fecharModal"
 				></button>
-			</header>
-			<section class="modal-card-body">
+			</template>
+			<template v-slot:corpo>
 				<div class="field">
 					<label
 						for="descricaoDaTarefa"
@@ -60,8 +53,8 @@
 						v-model="tarefaSelecionada.descricao"
 					/>
 				</div>
-			</section>
-			<footer class="modal-card-foot">
+			</template>
+			<template v-slot:rodape>
 				<button
 					class="button is-success"
 					@click="alterarTarefa"
@@ -74,8 +67,8 @@
 				>
 					Cancelar
 				</button>
-			</footer>
-		</div>
+			</template>
+		</modal>
 	</div>
 </template>
 
@@ -84,6 +77,7 @@
 
 	import Box from '../../components/Box.vue';
 	import FormularioTempo from '../../components/Formulario.vue';
+	import Modal from '../../components/Modal.vue';
 	import Tarefa from '../../components/Tarefa.vue';
 	import { ITarefa } from '@/interfaces/ITarefa';
 	import { useStore } from '@/store';
@@ -100,6 +94,7 @@
 			FormularioTempo,
 			Tarefa,
 			Box,
+			Modal,
 		},
 		setup() {
 			const store = useStore();
@@ -107,13 +102,6 @@
 			store.dispatch(OBTER_PROJETOS);
 
 			const filtro = ref('');
-			// const tarefas = computed(() =>
-			// 	store.state.task.tasks.filter(
-			// 		(tarefa) =>
-			// 			!filtro.value ||
-			// 			tarefa.descricao.includes(filtro.value)
-			// 	)
-			// );
 
 			watchEffect(() => {
 				store.dispatch(OBTER_TAREFAS, filtro.value);
@@ -141,6 +129,7 @@
 			},
 			selecionarTarefa(tarefa: ITarefa): void {
 				this.tarefaSelecionada = tarefa;
+				console.log(this.tarefaSelecionada.descricao);
 			},
 			fecharModal(): void {
 				this.tarefaSelecionada = null;
