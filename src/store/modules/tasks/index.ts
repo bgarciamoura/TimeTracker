@@ -34,8 +34,11 @@ const tasksModule: Module<TasksState, State> = {
 		},
 	},
 	actions: {
-		[OBTER_TAREFAS]({ commit }): void {
-			clienteHttp.get('/tarefas').then((response) => {
+		[OBTER_TAREFAS]({ commit }, filtro: string): void {
+			const url = filtro
+				? `/tarefas?descricao=${filtro}`
+				: '/tarefas';
+			clienteHttp.get(url).then((response) => {
 				commit(DEFINIR_TAREFAS, response.data);
 			});
 		},
