@@ -13,7 +13,7 @@
     {
       "id": 1,
       "duracaoEmSegundos": 3600,
-      "descricao": "Primeira Tarefa do Vuex",
+      "descricao": "Primeira Tarefa do Vuex4",
       "projeto": {
         "id": 5,
         "nome": "VueJS em dois meses"
