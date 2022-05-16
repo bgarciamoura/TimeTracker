@@ -1,6 +1,19 @@
 <template>
 	<formulario-tempo @aoSalvarTarefa="salvarTarefa" />
 	<div class="lista">
+		<div class="field">
+			<p class="control has-icons-left">
+				<input
+					type="text"
+					class="input"
+					placeholder="Digite para filtrar"
+					v-model="filtro"
+				/>
+				<span class="icon is-small is-left">
+					<i class="fas fa-search"></i>
+				</span>
+			</p>
+		</div>
 		<tarefa
 			v-for="(tarefa, index) in tarefas"
 			:key="index"
@@ -67,7 +80,7 @@
 </template>
 
 <script lang="ts">
-	import { computed, defineComponent } from 'vue';
+	import { computed, defineComponent, ref, watchEffect } from 'vue';
 
 	import Box from '../../components/Box.vue';
 	import FormularioTempo from '../../components/Formulario.vue';
@@ -92,10 +105,24 @@
 			const store = useStore();
 			store.dispatch(OBTER_TAREFAS);
 			store.dispatch(OBTER_PROJETOS);
-			const tarefas = computed(() => store.state.task.tasks);
+
+			const filtro = ref('');
+			// const tarefas = computed(() =>
+			// 	store.state.task.tasks.filter(
+			// 		(tarefa) =>
+			// 			!filtro.value ||
+			// 			tarefa.descricao.includes(filtro.value)
+			// 	)
+			// );
+
+			watchEffect(() => {
+				store.dispatch(OBTER_TAREFAS, filtro.value);
+			});
+
 			return {
 				store,
-				tarefas,
+				tarefas: computed(() => store.state.task.tasks),
+				filtro,
 			};
 		},
 		data() {
